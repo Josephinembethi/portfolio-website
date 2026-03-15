@@ -562,16 +562,7 @@
   opacity: 1;
 }
 
-.tech-tag {
-  background: white;
-  color: #2a2342;
-  padding: 0.3rem 1rem;
-  border-radius: 30px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  backdrop-filter: blur(5px);
-  background: rgba(255, 255, 255, 0.95);
-}
+
 
 .project-content {
   padding: 1.8rem;
@@ -596,11 +587,11 @@
 
 
 
-.github-link, .behance-link {
+.github-link {
   color: #2b6c94;
 }
 
-.github-link:hover, .behance-link:hover {
+.github-link:hover:hover {
   color: #1a4a66;
 }
 
@@ -618,7 +609,12 @@
   margin-bottom: 1.5rem;
   font-weight: 500;
 }
-
+.project-link button{
+  color: black;
+  width: 100%;        
+border: none;
+background-color: #2b6c94;
+}
 .cta-button {
   display: inline-block;
   background: #1e1b2b;
