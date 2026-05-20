@@ -122,7 +122,6 @@ if (contactForm) {
   });
 }
 
-/* ── ACTIVE NAV LINK ON SCROLL ── */
 const sections = document.querySelectorAll('section[id]');
 
 window.addEventListener('scroll', () => {
