@@ -1,130 +1,142 @@
+/* ── NAV TOGGLE ── */
+const menuToggle = document.querySelector('.menu-toggle');
+const navLinks = document.querySelector('.nav-links');
 
-document.addEventListener('DOMContentLoaded', function () {
-  const menuToggle = document.querySelector('.menu-toggle');
-  const navLinks = document.querySelector('.nav-links');
-  const body = document.body;
-
-  if (menuToggle && navLinks) {
-    menuToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      menuToggle.classList.toggle('active');
-      menuToggle.classList.toggle('open');
-      navLinks.classList.toggle('active');
-      body.classList.toggle('menu-open');
-    });
-
-    navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        menuToggle.classList.remove('active', 'open');
-        navLinks.classList.remove('active');
-        body.classList.remove('menu-open');
-      });
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!navLinks.contains(e.target) && !menuToggle.contains(e.target) && navLinks.classList.contains('active')) {
-        menuToggle.classList.remove('active', 'open');
-        navLinks.classList.remove('active');
-        body.classList.remove('menu-open');
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && navLinks.classList.contains('active')) {
-        menuToggle.classList.remove('active', 'open');
-        navLinks.classList.remove('active');
-        body.classList.remove('menu-open');
-      }
-    });
-  }
-
-  const contactForm = document.getElementById('contact-form');
-  if (contactForm) {
-    contactForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      alert("Thank you for your message! I’ll get back to you soon.");
-      this.reset();
-    });
-  }
-
-  function isInViewport(element) {
-    const rect = element.getBoundingClientRect();
-    return rect.top <= window.innerHeight && rect.bottom >= 0;
-  }
-
-  function animateBars() {
-    const bars = document.querySelectorAll('.bar');
-    bars.forEach(bar => {
-      try {
-        if (isInViewport(bar) && !bar.classList.contains('animated')) {
-          bar.style.width = bar.getAttribute('data-skill-level') || '';
-          bar.classList.add('animated');
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    });
-  }
-
-  function setupSkillAccordion() {
-    const categories = document.querySelectorAll('.skill-category');
-    categories.forEach(cat => {
-      const btn = cat.querySelector('.category-toggle');
-      const panel = cat.querySelector('.category-panel');
-      if (!btn || !panel) return;
-      const open = cat.getAttribute('data-open') === 'true';
-      if (open) {
-        cat.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
-        panel.style.maxHeight = panel.scrollHeight + 'px';
-        panel.querySelectorAll('.bar').forEach(b => {
-          b.style.width = b.getAttribute('data-skill-level') || '';
-          b.classList.add('animated');
-        });
-      } else {
-        btn.setAttribute('aria-expanded', 'false');
-        panel.style.maxHeight = '0';
-      }
-
-      btn.addEventListener('click', () => toggleCategory(cat));
-      btn.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggleCategory(cat);
-        }
-      });
-    });
-  }
-
-  function toggleCategory(cat) {
-    const btn = cat.querySelector('.category-toggle');
-    const panel = cat.querySelector('.category-panel');
-    if (!btn || !panel) return;
-    const isOpen = cat.classList.contains('open');
-    if (isOpen) {
-      cat.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-      panel.style.maxHeight = '0';
-      panel.querySelectorAll('.bar').forEach(b => {
-        b.style.width = '0';
-        b.classList.remove('animated');
-      });
-    } else {
-      cat.classList.add('open');
-      btn.setAttribute('aria-expanded', 'true');
-      panel.style.maxHeight = panel.scrollHeight + 'px';
-      panel.querySelectorAll('.bar').forEach(b => {
-        b.style.width = b.getAttribute('data-skill-level') || '';
-        b.classList.add('animated');
-      });
-    }
-  }
-
-  window.addEventListener('scroll', animateBars);
-  window.addEventListener('load', function () {
-    setupSkillAccordion();
-    animateBars();
+if (menuToggle) {
+  menuToggle.addEventListener('click', () => {
+    menuToggle.classList.toggle('active');
+    navLinks.classList.toggle('active');
   });
+}
 
+// Close nav on link click
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => {
+    menuToggle.classList.remove('active');
+    navLinks.classList.remove('active');
+  });
 });
 
+/* ── HEADER SCROLL SHADOW ── */
+const header = document.getElementById('site-header');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 20) {
+    header.style.boxShadow = '0 4px 30px rgba(0,0,0,0.4)';
+  } else {
+    header.style.boxShadow = 'none';
+  }
+});
+
+/* ── SCROLL REVEAL ── */
+const revealEls = document.querySelectorAll(
+  '.service-card, .skills-col, .project-card, .cert-card, ' +
+  '.about-grid, .info-item, .contact-info, .contact-form-wrap'
+);
+
+revealEls.forEach(el => el.classList.add('reveal'));
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, i * 80);
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+revealEls.forEach(el => revealObserver.observe(el));
+
+/* ── SKILL BARS ── */
+const skillBars = document.querySelectorAll('.bar-fill');
+
+const skillObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const bars = entry.target.querySelectorAll('.bar-fill');
+      bars.forEach(bar => {
+        const level = bar.getAttribute('data-skill-level');
+        bar.style.width = level;
+      });
+      skillObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+
+const skillsSection = document.querySelector('#skills');
+if (skillsSection) skillObserver.observe(skillsSection);
+
+/* ── PROJECT FILTER ── */
+const filterBtns = document.querySelectorAll('.filter-btn');
+const projectCards = document.querySelectorAll('.project-card');
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const filter = btn.getAttribute('data-filter');
+
+    projectCards.forEach(card => {
+      if (filter === 'all' || card.getAttribute('data-category') === filter) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  });
+});
+
+/* ── CONTACT FORM ── */
+const contactForm = document.getElementById('contact-form');
+const formSuccess = document.getElementById('form-success');
+
+if (contactForm) {
+  contactForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const submitBtn = contactForm.querySelector('.submit-btn');
+    const originalHTML = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    submitBtn.disabled = true;
+
+    try {
+      const response = await fetch(contactForm.action, {
+        method: 'POST',
+        body: new FormData(contactForm),
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (response.ok) {
+        contactForm.style.display = 'none';
+        formSuccess.style.display = 'block';
+      } else {
+        submitBtn.innerHTML = 'Failed — try again';
+        submitBtn.disabled = false;
+      }
+    } catch {
+      submitBtn.innerHTML = originalHTML;
+      submitBtn.disabled = false;
+    }
+  });
+}
+
+/* ── ACTIVE NAV LINK ON SCROLL ── */
+const sections = document.querySelectorAll('section[id]');
+
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY + 100;
+  sections.forEach(section => {
+    const top = section.offsetTop;
+    const height = section.offsetHeight;
+    const id = section.getAttribute('id');
+    const link = document.querySelector(`.nav-links a[href="#${id}"]`);
+    if (link) {
+      if (scrollY >= top && scrollY < top + height) {
+        document.querySelectorAll('.nav-links a').forEach(a => a.style.color = '');
+        link.style.color = '#7c3aed';
+      }
+    }
+  });
+});
