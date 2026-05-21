@@ -94,49 +94,29 @@ const contactForm = document.getElementById('contact-form');
 const formSuccess = document.getElementById('form-success');
 
 if (contactForm) {
-  contactForm.addEventListener('submit', async function (e) {
+  contactForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    const submitBtn = contactForm.querySelector('.submit-btn');
-    const originalHTML = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-    submitBtn.disabled = true;
-
-    try {
-      const response = await fetch(contactForm.action, {
-        method: 'POST',
-        body: new FormData(contactForm),
-        headers: { 'Accept': 'application/json' }
-      });
-
+    fetch(contactForm.action, {
+      method: 'POST',
+      body: new FormData(contactForm),
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(response => {
       if (response.ok) {
         contactForm.style.display = 'none';
         formSuccess.style.display = 'block';
+        setTimeout(() => {
+          contactForm.reset(); 
+          contactForm.style.display = 'block';
+          formSuccess.style.display = 'none';
+        }, 30000); 
       } else {
-        submitBtn.innerHTML = 'Failed — try again';
-        submitBtn.disabled = false;
+        alert("Something went wrong. Please try again.");
       }
-    } catch {
-      submitBtn.innerHTML = originalHTML;
-      submitBtn.disabled = false;
-    }
+    })
+    .catch(() => {
+      alert("Network error. Please try again later.");
+    });
   });
 }
-
-const sections = document.querySelectorAll('section[id]');
-
-window.addEventListener('scroll', () => {
-  const scrollY = window.scrollY + 100;
-  sections.forEach(section => {
-    const top = section.offsetTop;
-    const height = section.offsetHeight;
-    const id = section.getAttribute('id');
-    const link = document.querySelector(`.nav-links a[href="#${id}"]`);
-    if (link) {
-      if (scrollY >= top && scrollY < top + height) {
-        document.querySelectorAll('.nav-links a').forEach(a => a.style.color = '');
-        link.style.color = '#7c3aed';
-      }
-    }
-  });
-});
