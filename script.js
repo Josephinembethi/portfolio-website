@@ -1,4 +1,3 @@
-/* ── NAV TOGGLE ── */
 const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelector('.nav-links');
 
@@ -9,7 +8,6 @@ if (menuToggle) {
   });
 }
 
-// Close nav on link click
 document.querySelectorAll('.nav-links a').forEach(link => {
   link.addEventListener('click', () => {
     menuToggle.classList.remove('active');

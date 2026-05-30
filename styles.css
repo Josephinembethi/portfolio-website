@@ -191,7 +191,7 @@ nav {
   display: block;
   width: 24px;
   height: 2px;
-  background: var(--text);
+  background: var(--purple);
   border-radius: 2px;
   transition: all 0.3s ease;
 }
